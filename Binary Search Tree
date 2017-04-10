@@ -1,0 +1,129 @@
+package bst;
+
+
+
+
+
+public class BST {
+
+	static Node Head; //if using the other Insert func,Head need not be static
+	public class Node{
+		int value;
+		Node llink;
+		Node rlink;
+		Node parent;
+		
+		public Node(int data){
+			this.value=data;
+			//this.parent=Head;
+			
+		}
+	}
+	
+	
+	public Node insert(Node n, int value){
+		//System.out.println("Inserting "+value);
+		if(n==null){
+			return (new Node(value));
+		}
+		if(value<n.value){
+			//System.out.println("Inserting "+value);
+			n.llink=insert(n.llink,value);
+		}
+		else{
+			//System.out.println("Inserting "+value);
+		n.rlink=insert(n.rlink,value);
+		}
+		return n;
+	}
+		
+	/*public static Node parent(Node nroot, int n2){
+		if(nroot==null){
+			return null;
+		}
+		if(nroot.value==n2){
+			return nroot;
+		}
+		if(n2>nroot.llink.value){
+			if()
+			
+		}
+		return nroot;
+	}
+	*/
+	
+	
+	public void print(Node head)
+	{
+		Node temp;
+		temp=Head;
+		while(temp!=null){
+			System.out.println(temp.value+"->");
+			temp=temp.llink;
+		}
+	}
+	
+	public void printInorder(Node head){
+		//System.out.println("Printing Inorder");
+		if(head!=null){
+			printInorder(head.llink);
+			System.out.println(head.value);
+			printInorder(head.rlink);
+		}
+	
+	}
+	
+	public static void main(String[] args) {
+		BST b = new BST();
+		
+		Head=b.insert(Head,7); //if using this, Head should be made static
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(Head);
+		//System.out.println(Head.parent);
+		System.out.println("The Inorder traversal of the tree is");
+		Head=b.insert(Head,9);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(Head);
+		//System.out.println("Printitng parent "+Head.rlink.parent.value);
+		//Node p1= parent(Head,Head.llink);
+		//System.out.println("Parent of 7 is "+p1.parent);
+		System.out.println("The Inorder traversal of the tree is");
+		Head=b.insert(Head,13);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(Head);
+		System.out.println("Printitng parent "+Head.rlink.parent.value);
+		
+		
+		/*System.out.println("The Inorder traversal of the tree is");
+		b.insert(21);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(b.Head);
+		System.out.println("The Inorder traversal of the tree is");
+		b.insert(34);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(b.Head);
+		System.out.println("The Inorder traversal of the tree is");
+		b.insert(36);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(b.Head);
+		System.out.println("The Inorder traversal of the tree is");
+		b.insert(45);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(b.Head);
+		System.out.println("The Inorder traversal of the tree is");
+		b.insert(54);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(b.Head);
+		System.out.println("The Inorder traversal of the tree is");
+		b.insert(65);
+		System.out.println("The Inorder traversal of the tree is");
+		b.printInorder(b.Head);
+		System.out.println("The Inorder traversal of the tree is");
+		b.insert(87);
+		System.out.println("The Inorder traversal of the tree is"); 
+		b.printInorder(b.Head);*/
+		
+		
+	}
+
+}
