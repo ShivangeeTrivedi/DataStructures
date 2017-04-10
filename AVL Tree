@@ -1,0 +1,184 @@
+package avltree;
+
+public  class AVLTree {
+	static Node root;
+	public class Node{ //Node class to define node structure
+		int key;
+		int height;
+		Node leftchild;
+		Node rightchild;
+		Node parent;
+		
+		public Node(int value){ //constructor initializing the height and key
+			this.key=value;
+			this.height=1;
+		}
+	}
+	
+	
+	public int maxFunc(int a , int b){ //function to calculate the maximum of two numbers
+		if(a>b){return a;}
+		else return b;
+	}
+	
+	public int heightFunc(Node n){ //function to return height of the given node
+		if(n==null){
+			return 0;
+		}
+		else{
+			return n.height;
+		}
+	}
+	
+	public int balanceFunc(Node n){ //function to calculate balance of the given node, diff of height of leftchild and rightchild
+		if (n==null){
+			return 0;
+		}
+		else{
+			return (heightFunc(n.leftchild)-heightFunc(n.rightchild));
+		}
+	}
+	
+	
+	
+	public void parent(Node n,Node par){ //function to find the parent of the node
+		if(n==null){
+			return;
+		}
+		n.parent=par;
+		parent(n.leftchild,n);
+		parent(n.rightchild,n);
+	}
+	
+	public Node rightRotate(Node n) { //function to perform right rotation
+        Node n1 = n.leftchild;
+        Node T2 = n1.rightchild;
+ 
+        n1.rightchild = n;
+        n.leftchild = T2;
+ 
+        n.height = maxFunc(heightFunc(n.leftchild), heightFunc(n.rightchild)) + 1;
+        n1.height = maxFunc(heightFunc(n1.leftchild), heightFunc(n1.rightchild)) + 1;
+ 
+        return n1;
+    }
+	
+	public Node leftRotate(Node n) { //function to perform left rotation
+        Node n2 = n.rightchild;
+        Node T2 = n2.leftchild;
+ 
+        n2.leftchild = n;
+        n.rightchild = T2;
+ 
+        n.height = maxFunc(heightFunc(n.leftchild), heightFunc(n.rightchild)) + 1;
+        n2.height = maxFunc(heightFunc(n2.leftchild), heightFunc(n2.rightchild)) + 1;
+ 
+        return n2;
+    }
+	
+	
+	public Node insert(Node n, int value){ //function to insert in a BST tree and make it AVL
+		if(n==null){
+			return (new Node(value));
+		}
+		if(value<n.key){
+			n.leftchild=insert(n.leftchild,value);
+		}
+		else{
+		n.rightchild=insert(n.rightchild,value);
+		}
+
+		n.height=maxFunc(heightFunc(n.leftchild),heightFunc(n.rightchild))+1;
+		
+		int balance = balanceFunc(n);
+		
+		if(balance>1 && value<n.leftchild.key){
+			return rightRotate(n);
+		}
+		
+		if(balance<-1 && value>n.rightchild.key){
+			return leftRotate(n);
+		}
+		
+		if(balance>1 && value>n.leftchild.key){
+			n.leftchild = leftRotate(n.leftchild);
+			return rightRotate(n); 
+		}
+		
+		if(balance<-1 && value<n.rightchild.key){
+			n.rightchild = rightRotate(n.rightchild);
+			return leftRotate(n);
+		}
+		
+		return n;
+	}
+
+	
+	public void printInorder(Node head){//Printing In-order traversal
+		if(head!=null){
+			printInorder(head.leftchild);
+			System.out.print(" "+head.key);
+			/*if(head.parent==null){
+				System.out.print("->null");
+			}
+			else{
+				System.out.print("->"+head.parent.key);
+			}*/
+			printInorder(head.rightchild);
+		}
+	}
+	
+	public static void main(String[] args) {
+		AVLTree tree = new AVLTree();
+		root=tree.insert(root,7);
+		tree.parent(root, null);
+		System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+        root=tree.insert(root,9);
+        tree.parent(root, null);
+        System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+        root=tree.insert(root,13);
+        tree.parent(root, null);
+        System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root); 
+        
+		root=tree.insert(root,21);
+		tree.parent(root, null);
+		System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+		root=tree.insert(root,34);
+		tree.parent(root, null);
+		System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+		root=tree.insert(root,36);
+		tree.parent(root, null);
+		System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+		root=tree.insert(root,45);
+		tree.parent(root, null);
+		System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+        root=tree.insert(root,54);
+        tree.parent(root, null);
+        System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+        root=tree.insert(root,65);
+        tree.parent(root, null);
+        System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+        
+        root=tree.insert(root,87);
+        tree.parent(root, null);
+        System.out.println("\nThe Inorder traversal of constructed tree is : ");
+        tree.printInorder(root);
+	}//main ends
+
+}//AVLTree class ends
