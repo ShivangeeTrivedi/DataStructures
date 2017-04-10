@@ -1,0 +1,262 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package shortestpath;
+
+/**
+ *
+ * @author shiva
+ */
+public class ShortestPath { //ShortestPath begins
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) { //Main class begins
+        // TODO code application logic here
+        
+        Graph g = new Graph(9); //create a new graph
+        for (int i = 0; i < 9; i++) { //add all vertices to the graph
+            g.addVertex(i);
+        }
+        System.out.println("The adjacency list along with distance is :"); //as and when edges are added, print out the src and dest vertex and the distance between them
+       
+        g.newedge(1, 2, 9); //newedge adds src dest and distance between src and dest. There are 15 edges totatlly, it is an undirected graph
+        g.newedge(1, 3, 14);
+        g.newedge(1, 8, 15);
+        g.newedge(2, 1, 9);
+        g.newedge(2, 4, 24);
+        g.newedge(3, 1, 14);
+        g.newedge(3, 4, 18);
+        g.newedge(3, 8, 5);
+        g.newedge(3, 5, 30);
+        g.newedge(4, 2, 24);
+        g.newedge(4, 3, 18);
+        g.newedge(4, 5, 2);
+        g.newedge(4, 6, 6);
+        g.newedge(4, 7, 19);
+        g.newedge(5, 3, 30);
+        g.newedge(5, 4, 2);
+        g.newedge(5, 6, 11);
+        g.newedge(5, 7, 16);
+        g.newedge(5, 8, 20);
+        g.newedge(6, 4, 6);
+        g.newedge(6, 5, 11);
+        g.newedge(6, 7, 6);
+        g.newedge(7, 4, 19);
+        g.newedge(7, 6, 6);
+        g.newedge(7, 5, 16);
+        g.newedge(7, 8, 44);
+        g.newedge(8, 1, 15);
+        g.newedge(8, 3, 5);
+        g.newedge(8, 5, 20);
+        g.newedge(8, 7, 44);
+        g.print(1); // source is 1, so Djistra's Algo is giving distance from 1 to all other nodes
+    
+    }
+        
+        public static class Graph { //class graph to create a graph from vertices and edges 
+        Vertex[] arr; //array is used to store all vertices
+        int max;
+        int size;
+
+        public Graph(int maxSize) {
+            this.max = maxSize;
+            arr = new Vertex[maxSize];
+        }
+
+        public void addVertex(int next) { //add vertex and update size of the array contaning vertices
+            arr[size++] = new Vertex(next);
+           
+        }
+       
+        public void newedge(int src, int dest, int distance) { //add a new edge from node1 to node 2 along with the distance
+            int index1 = src;
+            int index2 = dest;
+            arr[index1].adj = new Adjacent(index2, distance, arr[index1].adj);
+            System.out.print(arr[index1].v+"->"+arr[index1].adj.index+" at distance :"+arr[index1].adj.weight);
+            System.out.println("\n");
+            
+        }
+
+        
+        public void print(int source){ //print function which prints the shortest path between nodes
+            Djikstra(arr[source]);
+            for(int i = 1; i < max; i++){
+                System.out.println("Distance of "+arr[i].v+" from 1 is: "+ arr[i].weight);
+            }
+            
+        }
+        
+    
+
+        
+        public class Vertex { //class vertex 
+            int weight;
+            int v;
+            Adjacent adj;
+            Queue s;
+
+            public Vertex(int name) { //initialize all vertices weight to infinity initially
+                this.v = name;
+                weight = Integer.MAX_VALUE;
+                s = Queue.nextelement;
+            }
+
+            public int compareTo(Vertex v) { //compare func to compare weights of two vertices. return 1 if the vertex weight is less than its original/previous weight
+                if (this.weight == v.weight) {
+                    return 0;
+                }
+                if (this.weight < v.weight) {
+                    return -1;
+                }
+                return 1;
+            }
+        }
+
+        public enum Queue { //to implement Priority Queue from the heap. 
+            nextelement, wait_element, visited_element
+        }
+
+        public class Adjacent { //class Adjacent to determine adjacent vertex
+            int index;
+            Adjacent next;
+            int weight;
+
+            Adjacent(int index, int weight, Adjacent next) { //initialize index weight and adjacent of the vertices
+                this.index = index;
+                this.next = next;
+                this.weight = weight;
+            }
+        }
+
+        public void Djikstra(Vertex v) { //calculate Djikstra Algo using priority queue
+            Heap h = new Heap(max); //create a heap. Add first vertex to the heap
+            h.addtoheap(v);
+            v.s = Queue.wait_element; //initially the element that is added will be waiting
+            v.weight = 0; //set the source weight to 0
+            while (!h.isEmpty()) { //implement heap as a priority queue. Since it is min heap vertex 1 will be removed first from the priority queue and it's state will change to visisted
+                Vertex u = h.remove(); //percolate down and remove
+               u.s = Queue.visited_element;
+                Adjacent temp = u.adj; //temp is the next vertex to be added 
+                while (temp != null) { //keep adding vertices to the heap. Call percolateUp to retain min heap property
+                    if (arr[temp.index].s == Queue.nextelement) {
+                        h.addtoheap(arr[temp.index]);
+                        arr[temp.index].s = Queue.wait_element;
+                    }
+                    if (arr[temp.index].weight > u.weight + temp.weight) {
+                        arr[temp.index].weight = u.weight + temp.weight;
+                        h.percolate_up(arr[temp.index]);
+                    }
+                    temp = temp.next;
+                }
+            }
+        }
+        
+        public static class Heap {
+            private final Vertex[] heap;
+            private final int maxSize;
+            private int size;
+
+            public Heap(int maxSize) { //initialize the vertices(elements) of the heap and their size
+                this.maxSize = maxSize;
+                heap = new Vertex[maxSize];
+            }
+
+            public void addtoheap(Vertex u) { //add and percolate up if required. Percolate up is from the last element in the heap
+                heap[size++] = u;
+                percolate_up(size - 1);
+            }
+
+            public void percolate_up(Vertex u) { 
+                for (int i = 0; i < maxSize; i++) {
+                    if (u == heap[i]) {
+                        percolate_up(i);
+                        break;
+                    }
+                }
+            }
+            
+            public void percolate_up(int position) { //percolate up. Compare the element with its parent. 
+                //If it is less than parent, percolate up
+                int curr = position;
+                Vertex currentItem = heap[curr];
+                int parent = (curr - 1) / 2;
+                Vertex parentItem = heap[parent];
+                while (currentItem.compareTo(parentItem) == -1) { //if the weight of the item is greater than its parent, swap
+                    swap(curr, parent);
+                    curr = parent;
+                    if (curr == 0) {
+                        break;
+                    }
+                    currentItem = heap[curr];
+                    parent = (curr - 1) / 2;
+                    parentItem = heap[parent];
+                }
+            }
+
+            public Vertex remove() { //remove the least element as and when its priority is served
+                Vertex v = heap[0];
+                swap(0, size - 1); 
+                heap[size - 1] = null;
+                size--;
+                percolate_down(0);
+                return v;
+            }
+
+            public void percolate_down(int postion) {//percolate down func. Compare the element with its left and right children. If it is greater than either of them, swap
+                if (size == 1) {
+                    return;
+                }
+
+                int currp = postion;
+                Vertex curri = heap[currp];
+                int lc = 2 * currp + 1;  //find left child
+                int rc = 2 * currp + 2; //find right child
+                int childIndex; //child which is the lesser one
+                if (heap[lc] == null) {
+                    return;
+                }
+                if (heap[rc] == null) {
+                    childIndex = lc;
+                } else if (heap[rc].compareTo(heap[lc]) == -1) { //check which of the two children are lesser
+                    childIndex = rc;
+                } else {
+                    childIndex = lc;
+                }
+                Vertex child = heap[childIndex]; 
+                while (curri.compareTo(child) == 1) { 
+                    swap(currp, childIndex); //swap the least of the children with the parent
+                    currp = childIndex; //Again this child needs to be percolated all the way to the bottom, if required
+                    curri = heap[currp];
+                    lc = 2 * currp + 1; //again calculate left and right children
+                    rc = 2 * currp + 2;
+                    if (heap[lc] == null) {
+                        return;
+                    }
+                    if (heap[rc] == null) {
+                        childIndex = lc;
+                    } else if (heap[rc].compareTo(heap[lc]) == -1) {
+                        childIndex = rc;
+                    } else {
+                        childIndex = lc;
+                    }
+                }
+            }
+            public void swap(int index1, int index2) { //swap function
+                Vertex temp = heap[index1];
+                heap[index1] = heap[index2];
+                heap[index2] = temp;
+            }
+
+            public boolean isEmpty() { //check if heap is empty
+
+                return size == 0;
+            }
+        } //Heap class ends
+    } //Graph class ends
+
+
+} //ShortestPath class ends
